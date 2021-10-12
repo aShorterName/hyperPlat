@@ -1,0 +1,174 @@
+<head>
+	<title>HyperPlat</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta
+      name="description"
+      content="Yet another project which will get abandoned eventually. Now in 4D!"
+    />
+    <meta name="author" content="U+2588" />
+</head>
+<body><canvas width="256" height="192" id="main"></canvas>
+<canvas width="256" height="192" id="player"></canvas>
+<p style="right:0;position:relative;z-index: 3;" id="log">Loading/Something went HORRIBLY wrong</p>
+<button style="z-index:3;position:relative" id="button">FULLSCREEN</button>
+<button style="z-index:3;position:relative" onclick="toggleFloatBox()">TOGGLE INFO</button>
+<p id="editor" style="z-index:3;position:relative"><br>EDITOR MENU<br>(it does things on right click)</p>
+<div style="display: flex; z-index: 0; position: absolute; width: 100%; height: 100%; top:0;align-items: center;justify-content: center;"><div style="border-style:solid;width: 500px; height: 500px; background-color: #bbbbbb;border-radius: 10px;overflow-y: scroll;z-index: 3;" id="floatbox">
+<button onclick="toggleFloatBox()">CLOSE</button>
+<details><summary>What the hell is this?</summary>
+<div class="detailBox">
+This is a 4D platformer.<br>
+Use the mouse and keyboard to do things.<br>
+See full controls one tab below this.
+</div></details>
+<details><summary>Controls</summary>
+<div class="detailBox">
+WASD{or arrow keys (not recommended)} - Forwards, Left, Right, Back, respectively.<br>
+Q,E - relatively W- and W+, respectively.<br>
+[Space] - Jump.<br>
+M - Reset camera angle.<br>
+X{release} - Place block.<br>
+X{hold} - Show the placed block's outline.<br>
+R - Respawn.<br>
+Right mouse - Open edit menu.<br>
+Move mouse - Rotate camera[XZ, YZ].<br>
+Move mouse{+shift} - Rotate camera[XY, XW].<br>
+Move mouse{+control} - Double rotate camera[XY+ZW, XW+YZ].<br>
+</div></details>
+<details><summary>How to edit blocks</summary>
+<div class="detailBox">
+Right clicking on or near a block selects it.<!--i absolutely despise the camera system--><br>
+When a block is selected it will have a blue edge around it, and there will be some buttons and text on the top left of the screen.<br>
+X,Y,Z,W are the positions of the selected block.<br>
+Width, Height, Depth, and Quad are the length of an edge of the block, X,Y,Z,W, respectively.<br>
+Press <button>Save</button> to save any changes,<br>
+<button>Delete</button> to delete the block, and<br>
+<button>Deselect</button> to select nothing.
+</div></details>
+<details><summary>I found a major visual glitch!</summary>
+<div class="detailBox">
+Yes, that is a glitch.<br>
+No, I am not going to be fixing it.<br>
+I am not messing with the rendering code again.
+</div></details>
+<details><summary>Help I just fell into the void?</summary>
+<div class="detailBox">
+Just press R.
+</div></details>
+<details><summary>The list of blocks</summary>
+<div class="detailBox">
+format: <br>ID. Block<br>
+<ol>
+<li>Solid block</li>
+<li>Death block</li>
+<li>Bounce block</li>
+<li>Upwards conveyor block</li>
+</ol>
+<b>Anything else will just be a pink solid block.</b>
+</div></details>
+<details><summary>The four dimensions</summary>
+<div class="detailBox">
+In real life, there are 3 spacial dimensions. These dimensions have 3 axes, one for each dimension, which are X, Y, and Z. These axes have 2 directions each, Left, Right, Up, Down<!-- y-up don't talk to me about this -->, Front and Back.<br>
+<br>
+This can be extended to 4 spacial dimensions. 4 axes, X, Y, Z, and the new axis W. The new directions are called Ana and Kata, from some Greek words. <sup><a href = "https://en.wikipedia.org/wiki/Four-dimensional_space#Orthogonality_and_vocabulary">[citation needed]</a></sup>
+</div></details>
+<details><summary>Why is my camera spinning around the center of the screen?</summary>
+<div class="detailBox">
+Holonomy.<br><br>
+It's a consequence of the sphere the camera rotation is contained in.<br>
+Consider an ant on a cube. The face it on is colored <b style="color:red">Red</b>. The face above it is <b style="color:blue">Blue</b>. The face on the right of it is <b style="color:green">Green</b>. <br><img src="./cube1.png"></img><br>The ant moves <b>Up</b> onto the <b style="color:blue">Blue</b> face.<br> It then moves <b>Right</b> onto the <b style="color:green">Green</b> face.<br>The ant moves <b>Down</b> to the <b style="color:red">Red</b> face.<br>The ant now is back on the <b style="color:red">Red</b> face, but now the <b style="color:green">Green</b> face is above it, and the <b style="color:blue">Blue</b> face is on the left.<br>
+That is what holonomy does, and it is a natural effect of spherical geometry.<br>
+<details><summary>Whatever. How can I fix it?</summary>
+<div class="detailBox">
+If the camera is rotated <b>Clockwise</b>, move your mouse in circles <b>Counter-Clockwise</b>.<br>
+If the camera is rotated <b>Counter-Clockwise</b>, move your mouse in circles <b>Clockwise</b>.<br><br>
+I cannot fix this without restructuring almost all of the mouse rotation code so this will have to do.
+</div></details>
+</div></details>
+</div></div>
+<style>
+html body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+.detailBox {
+	background-color:white;
+	border-style: solid;
+	margin: 10px;
+	border-radius: 10px;
+	padding: 10px;
+}
+summary {
+	background-color:white;
+	border-style: solid;
+	border-radius: 10px;
+	padding: 3px;
+}
+details {
+	margin: 10px;
+}
+canvas {
+position:absolute;
+  transform-origin: left top;
+  image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    image-rendering: pixelated;
+    -ms-interpolation-mode: nearest-neighbor;
+	top:0;
+	left:0;
+}
+#player {
+	pointer-events: none;
+}
+</style><!--
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="4dgeom/lib/parser.js"></script>
+<script src="4dgeom/lib/glsl_parser.js"></script>
+
+<script src="4dgeom/lib/earcut.min.js"></script>
+
+<script src="4dgeom/lib/dat.gui.js"></script>
+
+
+<script src="4dgeom/lib/threejs/three.js"></script>
+
+<script src="4dgeom/lib/threejs/QuickHull.js"></script>
+<script src="4dgeom/lib/threejs/ConvexGeometry.js"></script>
+<script src="4dgeom/lib/threejs/ConvexHyperGeometry.js"></script>
+<script src="4dgeom/lib/threejs/HyperGeometry.js"></script>
+<script src="4dgeom/lib/threejs/THREE.MeshLine.js"></script>
+
+<script src="4dgeom/lib/versor.js"></script>
+
+<script src="4dgeom/lib/threejs/OrbitControls.js"></script>
+
+<script src="4dgeom/util/polygonize.js"></script>
+
+<script src="4dgeom/util/gui.js"></script>
+<script src="4dgeom/util/grid.js"></script>
+<script src="4dgeom/util/util.js"></script>
+<script src="4dgeom/util/QuickHull4D.js"></script>
+
+<script src="4dgeom/2d.js"></script>
+<script src="4dgeom/3d.js"></script>
+<script src="4dgeom/4d.js"></script>
+
+<script src="4dgeom/Projecting.js"></script>
+
+<script src="4dgeom/Slicing.js"></script>
+<script>if(window.E4 == null){ 
+		window.E4 = versor.create({
+			metric:[1, 1, 1, 1],
+			types: [
+				{ name:"Rot", bases:["s", "e12", "e13", "e23", "e14", "e24", "e34"] },
+			]
+		});
+	}</script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js"></script>
+<script src="main.js"></script>
+	</body>
